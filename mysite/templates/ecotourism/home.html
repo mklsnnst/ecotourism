@@ -1,103 +1,104 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Экотуризм - Главная</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'ecotourism:home' %}">Экотуризм</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'ecotourism:home' %}">Главная</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'ecotourism:tour_list' %}">Все туры</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Добро пожаловать на сайт Экотуризма!</h1>
-        <p class="text-center">Средний рейтинг отзывов: {{ avg_rating|floatformat:1 }}</p>
-        <p class="text-center">Всего отзывов: {{ reviews_count }}</p>
+   <html lang="ru">
+   <head>
+       <meta charset="UTF-8">
+       <title>Экотуризм - Главная</title>
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   </head>
+   <body>
+       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+           <div class="container">
+               <a class="navbar-brand" href="{% url 'ecotourism:home' %}">Экотуризм</a>
+               <div class="collapse navbar-collapse">
+                   <ul class="navbar-nav me-auto">
+                       <li class="nav-item"><a class="nav-link" href="{% url 'ecotourism:home' %}">Главная</a></li>
+                       <li class="nav-item"><a class="nav-link" href="{% url 'ecotourism:tour_list' %}">Все туры</a></li>
+                       <li class="nav-item"><a class="nav-link" href="{% url 'ecotourism:add_tour' %}">Добавить тур</a></li>
+                   </ul>
+               </div>
+           </div>
+       </nav>
+       <div class="container mt-5">
+           <h1 class="text-center mb-4">Добро пожаловать на сайт Экотуризма!</h1>
+           <p class="text-center">Средний рейтинг отзывов: {{ avg_rating|floatformat:1 }}</p>
+           <p class="text-center">Всего отзывов: {{ reviews_count }}</p>
 
-        <!-- Виджет 1: Список доступных туров -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Последние доступные туры</h2>
-            </div>
-            <div class="card-body">
-                {% for tour in tours %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title"><a href="#">{{ tour.title }}</a></h5>
-                            <p class="card-text"><strong>Цена:</strong> {{ tour.price_numeric }} руб.</p>
-                            <p class="card-text"><strong>Дата:</strong> {{ tour.available_dates }}</p>
-                            <p class="card-text"><strong>Место начала:</strong> {{ tour.start_location }}</p>
-                            <p class="card-text">{{ tour.description|truncatewords:20 }}</p>
-                            <a href="#" class="btn btn-primary">Подробнее</a>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p>Нет доступных туров.</p>
-                {% endfor %}
-                <a href="{% url 'ecotourism:tour_list' %}" class="btn btn-link">Показать все туры</a>
-            </div>
-        </div>
+           <!-- Виджет 1: Список доступных туров -->
+           <div class="card mb-4">
+               <div class="card-header">
+                   <h2>Последние доступные туры</h2>
+               </div>
+               <div class="card-body">
+                   <ol>
+                       {% for tour in tours %}
+                           <li>
+                               <h5 class="card-title"><a href="{% url 'ecotourism:tour_detail' tour.id %}">{{ tour.title }}</a></h5>
+                               <p class="card-text"><strong>Цена:</strong> {{ tour.price_numeric }} руб.</p>
+                               <p class="card-text"><strong>Дата:</strong> {{ tour.available_dates|date:"d F Y г." }}</p>
+                               <p class="card-text"><strong>Место начала:</strong> {{ tour.start_location }}</p>
+                               <p class="card-text">{{ tour.description|truncatewords:20 }}</p>
+                               <a href="{% url 'ecotourism:tour_detail' tour.id %}" class="btn btn-primary">Подробнее</a>
+                           </li>
+                       {% empty %}
+                           <p>Нет доступных туров.</p>
+                       {% endfor %}
+                   </ol>
+                   <a href="{% url 'ecotourism:tour_list' %}" class="btn btn-link">Показать все туры</a>
+               </div>
+           </div>
 
-        <!-- Виджет 2: Рекомендуемые туры -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Рекомендуемые туры</h2>
-            </div>
-            <div class="card-body">
-                {% for tour in recommended_tours %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="tour-title">{{ tour.title }}</h5>
-                            <p class="card-text"><strong>Дата:</strong> {{ tour.available_dates }}</p>
-                            <a href="#" class="btn btn-primary">Подробнее</a>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p>Нет рекомендаций.</p>
-                {% endfor %}
-            </div>
-        </div>
+           <!-- Виджет 2: Рекомендуемые туры -->
+           <div class="card mb-4">
+               <div class="card-header">
+                   <h2>Рекомендуемые туры</h2>
+               </div>
+               <div class="card-body">
+                   {% for tour in recommended_tours %}
+                       <div class="card mb-3">
+                           <div class="card-body">
+                               <h5 class="tour-title"><a href="{% url 'ecotourism:tour_detail' tour.id %}">{{ tour.title }}</a></h5>
+                               <p class="card-text"><strong>Дата:</strong> {{ tour.available_dates|date:"d F Y г." }}</p>
+                               <a href="{% url 'ecotourism:tour_detail' tour.id %}" class="btn btn-primary">Подробнее</a>
+                           </div>
+                       </div>
+                   {% empty %}
+                       <p>Нет рекомендаций.</p>
+                   {% endfor %}
+               </div>
+           </div>
 
-        <!-- Виджет 3: Поиск туров -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Поиск туров</h2>
-            </div>
-            <div class="card-body">
-                <form method="get" action="{% url 'ecotourism:search' %}">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="q" placeholder="Поиск по названию, описанию или месту">
-                        <button class="btn btn-primary" type="submit">Найти</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+           <!-- Виджет 3: Поиск туров -->
+           <div class="card mb-4">
+               <div class="card-header">
+                   <h2>Поиск туров</h2>
+               </div>
+               <div class="card-body">
+                   <form method="get" action="{% url 'ecotourism:search' %}">
+                       <div class="input-group">
+                           <input type="text" class="form-control" name="q" placeholder="Поиск по названию, описанию или месту">
+                           <button class="btn btn-primary" type="submit">Найти</button>
+                       </div>
+                   </form>
+               </div>
+           </div>
 
-        <!-- Виджет 4: Пользовательские действия -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Мой аккаунт</h2>
-            </div>
-            <div class="card-body">
-                {% if user.is_authenticated %}
-                    <p>Привет, {{ user.name }}!</p>
-                    <a href="#" class="btn btn-link">Мои бронирования</a>
-                    <a href="#" class="btn btn-link">Избранное</a>
-                    <a href="#" class="btn btn-link">Профиль</a>
-                {% else %}
-                    <a href="#" class="btn btn-primary">Войти</a>
-                    <a href="#" class="btn btn-secondary">Зарегистрироваться</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+           <!-- Виджет 4: Пользовательские действия -->
+           <div class="card">
+               <div class="card-header">
+                   <h2>Мой аккаунт</h2>
+               </div>
+               <div class="card-body">
+                   {% if user.is_authenticated %}
+                       <p>Привет, {{ user.name }}!</p>
+                       <a href="#" class="btn btn-link">Мои бронирования</a>
+                       <a href="#" class="btn btn-link">Избранное</a>
+                       <a href="#" class="btn btn-link">Профиль</a>
+                   {% else %}
+                       <a href="#" class="btn btn-primary">Войти</a>
+                       <a href="#" class="btn btn-secondary">Зарегистрироваться</a>
+                   {% endif %}
+               </div>
+           </div>
+       </div>
+   </body>
+   </html>
